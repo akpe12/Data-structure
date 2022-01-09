@@ -1,0 +1,146 @@
+class Node:
+    def __init__(self, item):
+        self.data = item
+        self.next = None
+        
+class LinkedList:
+    def __init__(self):
+        self.nodeCount = 0
+        self.head = Node(None)
+        self.tail = None
+        self.head.next = self.tail
+        
+    def __repr__(self):
+        if self.nodeCount == 0:
+            return "List is empty!"
+        
+        message = ""
+        curr = self.head
+        
+        while curr != None:
+            message += str(curr.data)
+            message += " -> "
+            curr = curr.next
+            
+        return message
+    
+    def getNodeCount(self):
+        
+        return self.nodeCount
+    
+    def getAt(self, idx):
+        if idx < 0 or idx > self.nodeCount:
+            return None
+        
+        #i = 1 #dummy node가 없을 때 사용한다.
+        i = 0 
+        curr = self.head
+        while i < idx:
+            curr = curr.next
+            i += 1
+        
+        return curr
+    
+    def travelse(self):
+        items = []
+        curr = self.head
+        while curr != None:
+            #items.append(curr.data) #dummy node가 존재하지 않을 때 사용한다.
+            #curr = curr.next
+            curr = curr.next
+            items.append(curr.data)
+        
+        return items
+    
+    def insertAt(self, idx, newNode):
+        if idx < 1 or idx > self.nodeCount + 1:
+            return False
+        
+        if idx == 1:
+            newNode.next = self.head
+            self.head = newNode
+        
+        else: 
+            prev = self.getAt(idx - 1)
+            newNode.next = prev.next
+            prev.next = newNode
+
+        if idx == self.nodeCount + 1:
+            self.tail = newNode
+                
+        self.nodeCount += 1
+        return True
+    
+    def insertAt2(self, idx, newNode):
+        if idx < 1 or idx > self.nodeCount + 1:
+            return False
+        
+        if idx != 1 and idx == self.nodeCount + 1:    #두 조건에 걸친다면, 리스트 끝에 숫자를 삽입하는 경우이다.
+            prev = self.tail
+        
+        else:
+            prev = self.getAt(idx - 1)
+        
+        return self.insertAfter(prev, newNode)
+    
+    def insertAfter(self, prev, newNode):
+        newNode.next = prev.next
+        if prev.next == None:
+            self.tail = newNode
+        prev.next = newNode
+        self.nodeCount += 1
+        
+        return True
+    
+    def popAfter(self, prev):
+        curr = prev.next
+        
+        if prev.next == None:
+            return None
+        if prev.next.next == None:
+            prev.next = None
+            self.tail = prev
+            
+        else:
+            prev.next = prev.next.next
+        
+        self.nodeCount -= 1
+        return curr.data
+            
+    
+    def popAt(self, idx):
+        prev = self.getAt(idx - 1)
+        if idx < 1 or idx > self.nodeCount:
+            raise IndexError
+        
+        if idx == 1:
+            curr = self.head
+            if self.nodeCount == 1: #idx가 1이면서 노드 총 개수가 1일 때
+                self.head = None
+                self.tail = None
+            else:                   #idx가 1이고 노드 총 개수가 1이 아닐 때
+                self.head = self.head.next
+            
+        else:
+            if idx == self.nodeCount:  #idx가 리스트의 마지막을 가리킬 때  
+                curr = self.tail
+                prev.next = None
+                self.tail = prev
+            
+            else:                      #idx가 리스트의 노드들의 중간 부분을 가리킬 때
+                curr = prev.next
+                prev.next = prev.next.next
+                
+        self.nodeCount -= 1
+        return curr.data
+        
+    def popAt2(self, idx):
+        if idx < 1 or idx > self.nodeCount:
+            raise IndexError
+        
+        #if idx == 1 and idx == self.nodeCount:
+            #prev = self.head
+        
+        prev = self.getAt(idx - 1)
+        
+        return self.popAfter(prev)
