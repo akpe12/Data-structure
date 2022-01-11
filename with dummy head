@@ -144,3 +144,10 @@ class LinkedList:
         prev = self.getAt(idx - 1)
         
         return self.popAfter(prev)
+
+    def concat(self, L):
+        self.tail.next = L.head.next
+        if L.tail != None:
+            self.tail = L.tail
+        
+        self.nodeCount += L.getNodeCount()
