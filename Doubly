@@ -1,0 +1,89 @@
+class Node:
+    def __init__(self, item):
+        self.data = item
+        self.prev = None
+        self.next = None
+    
+class DoublyLinkedList:
+    def __init__(self):
+        self.nodeCount = 0
+        self.head = Node(None)
+        self.tail = Node(None)
+        self.head.next = self.tail
+        self.head.prev = None
+        self.tail.next = None
+        self.tail.prev = self.head
+        
+    
+    def getAt(self, idx):
+        if idx < 0 or idx > self.nodeCount:    #왜 idx가 0미만이면 안 되는 거지? 왜 1미만이 아니지? getAt에 0을 넣어서 검증해보자.
+            return None
+        
+        i = 0
+        if idx > self.nodeCount // 2:
+            curr = self.tail
+            
+            while i < self.nodeCount - idx + 1:    # +1이 붙는 이유는 nodeCount가 10일때, 실제 nodeCount는 12이기 때문이다. dummy node 2개는 count에서 제외되므로.
+                curr = curr.prev
+                i += 1
+        else:       
+            curr = self.head
+
+            while i < idx:
+                curr = curr.next
+                i += 1
+        
+        return curr
+        
+    def travelse(self):
+        items = []
+        curr = self.head
+        
+        while curr.next.next != None:    #self.head와 self.tail은 Node(None)이고 self.head.next와 self.tail.next는 None이기 때문이다. 그래서 while curr.next != None가 아닌 것이다.
+            curr = curr.next
+            items.append(curr.data)
+            
+        return items
+    
+    def reverse(self):
+        items = []
+        curr = self.tail
+        
+        while curr.prev.prev != None:
+            curr = curr.prev
+            items.append(curr.data)
+        
+        return items
+    
+    def insertAt(self, idx, newNode):    #insertAfter를 활용함, dummy Node가 있기 때문에
+        if idx < 1 or idx > self.nodeCount + 1:
+            return False
+        
+        prev = self.getAt(idx - 1)
+        
+        return self.insertAfter(prev, newNode)
+    
+    def insertAfter(self, prev, newNode):    #prev.next가 tail이어도 연결을 지을 수 있기 때문에, next.next가 None이어도 아무 상관이 없다. 이 method는 prev의 idx가 무조건 정상적이다는 걸 가정하고 작성한다. 
+        nextNode = prev.next
+        prev.next = newNode
+        newNode.prev = newNode
+        newNode.prev = prev
+        newNode.next = nextNode
+        self.nodeCount += 1
+        
+        return True
+    
+    def popAfter(self, prev):    #아직 검증 안 된 method.
+        curr = prev.next
+        
+        if curr.next == None:
+            prev.next = self.tail
+            self.tail.prev = prev
+        else:
+            prev.next = prev.next.next
+            prev.next.next.prev = prev
+            self.nodeCount -= 1
+
+        return True
+    
+    def insertBefore(self, nextNode, newNode):    #연습문제
