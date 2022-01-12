@@ -15,18 +15,36 @@ class DoublyLinkedList:
         self.tail.prev = self.head
         
     
+    def __repr__(self):
+        if self.nodeCount == 0:
+            return "List is empty!"
+        
+        curr = self.head
+        message = ""
+        
+        while curr.next.next != None:
+            curr = curr.next
+            message += str(curr.data)
+            message += " <-> "
+            
+        return message
+    
+    def getNodeCount(self):
+        return self.nodeCount
+    
     def getAt(self, idx):
         if idx < 0 or idx > self.nodeCount:    #왜 idx가 0미만이면 안 되는 거지? 왜 1미만이 아니지? getAt에 0을 넣어서 검증해보자.
             return None
         
-        i = 0
         if idx > self.nodeCount // 2:
+            i = 0
             curr = self.tail
             
             while i < self.nodeCount - idx + 1:    # +1이 붙는 이유는 nodeCount가 10일때, 실제 nodeCount는 12이기 때문이다. dummy node 2개는 count에서 제외되므로.
                 curr = curr.prev
                 i += 1
-        else:       
+        else:
+            i = 0
             curr = self.head
 
             while i < idx:
@@ -73,17 +91,53 @@ class DoublyLinkedList:
         
         return True
     
-    def popAfter(self, prev):    #아직 검증 안 된 method.
-        curr = prev.next
-        
-        if curr.next == None:
-            prev.next = self.tail
-            self.tail.prev = prev
-        else:
-            prev.next = prev.next.next
-            prev.next.next.prev = prev
-            self.nodeCount -= 1
-
-        return True
-    
     def insertBefore(self, nextNode, newNode):    #연습문제
+        prev = nextNode.prev                      #newNode가 삽입되기 전이기 때문에, nextNode.prev.prev가 아니다.
+        prev.next = newNode
+        nextNode.prev = newNode
+        newNode.next = nextNode
+        newNode.prev = prev
+        
+        self.nodeCount += 1
+        
+        return True
+        
+    def popAt(self, idx):
+        if idx < 1 or idx > self.nodeCount:
+            raise IndexError
+        
+        prev = self.getAt(idx - 1)
+        if idx + 1 == self.nodeCount + 1:
+            nextNode = self.tail
+        
+        return self.popAfter(prev)
+    
+    def popAfter(self, prev):
+        nextNode = prev.next.next
+        curr = prev.next
+        prev.next = prev.next.next
+        nextNode.prev = prev
+        self.nodeCount -= 1
+
+        return curr.data
+    
+    def popBefore(self, nextNode):
+        curr = nextNode.prev
+        prev = nextNode.prev.prev
+        prev.next = nextNode
+        nextNode.prev = prev
+        self.nodeCount -= 1
+        
+        return curr.data
+    
+    def concat(self, L):
+        if L.nodeCount == 0 or self.nodeCount == 0:    #이게 지워저야 정답...?
+            return False
+        
+        curr = self.tail.prev
+        curr.next = L.head.next
+        L.head.next.prev = curr
+        self.tail = L.tail
+        self.nodeCount += L.nodeCount
+        
+        return True
