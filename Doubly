@@ -66,7 +66,7 @@ class DoublyLinkedList:
     def insertAfter(self, prev, newNode):    #prev.next가 tail이어도 연결을 지을 수 있기 때문에, next.next가 None이어도 아무 상관이 없다. 이 method는 prev의 idx가 무조건 정상적이다는 걸 가정하고 작성한다. 
         nextNode = prev.next
         prev.next = newNode
-        newNode.prev = newNode
+        nextNode.prev = newNode
         newNode.prev = prev
         newNode.next = nextNode
         self.nodeCount += 1
