@@ -1,0 +1,143 @@
+class Node:
+    def __init__(self, item):
+        self.data = item
+        self.next = None                
+        
+class CircularLinkedList:
+    def __init__(self):
+        self.nodeCount = 0
+        self.head = None                
+    
+    def __repr__(self):
+        if self.nodeCount == 0:
+            return "List is empty!"
+        
+        message = ""
+        curr = self.head
+        
+        while curr == self.head:          
+            message += str(curr.data)
+            message += " -> "
+            curr = curr.next
+        
+        while curr != self.head:
+            message += str(curr.data)    
+            message += " -> "
+            curr = curr.next
+            
+        return message
+    
+    def getData(self, idx):
+        if idx < 1 or idx > self.nodeCount:
+            return None
+        
+        curr = self.head
+        i = 1
+        
+        while i < idx:
+            curr = curr.next
+            i += 1
+            
+        return curr
+    
+    def getCount(self):
+        return self.nodeCount
+    
+    def travelse(self):
+        if self.nodeCount == 0:
+            return "List is empty!"
+        
+        items = list()
+        curr = self.head
+        items.append(curr.data)
+        curr = curr.next            
+        
+        while curr != self.head:
+            items.append(curr.data)        
+            curr = curr.next
+        
+        return items
+    
+    def append(self, newNode):
+        curr = self.head
+        
+        if self.nodeCount == 0:
+            self.head = newNode
+            newNode.next = self.head
+        else:
+            while curr.next != self.head:
+                curr = curr.next
+            curr.next = newNode
+            newNode.next = self.head
+        self.nodeCount += 1
+        
+        return True
+    
+    def insertAt(self, idx, newNode):
+        if idx < 1 or idx > self.nodeCount + 1:
+            return False
+        
+        prev = self.getData(idx - 1)
+        curr = self.getData(idx)
+        
+        if idx == 1:
+            last = self.getData(self.nodeCount)
+            newNode.next = curr    
+            self.head = newNode
+            last.next = self.head #tail에 있는 node를 새로운 self.head에 연결지어줘야 한다, 그렇지 않으면 전에 self.head로 지정된 node가 계속해서 self.head역할을 해버린다.
+                                   self.head는 이미 newNode로 변한 상태이지만, tail에게는 원래 있었던 node가 self.head이기 때문이다. 그렇다고 원래 있었던 노드가 여전히 self.head의
+                                   속성을 가지고 있다는 말은 아니다.
+            
+        else:
+            prev.next = newNode        
+            newNode.next = curr
+            
+        if idx == self.nodeCount + 1:
+            prev.next = newNode
+            newNode.next = self.head
+    
+        self.nodeCount += 1
+        return True
+        
+    def pop(self):
+        curr = self.head
+        
+        if self.nodeCount == 0:
+            return None
+        
+        if self.nodeCount == 1:
+            self.head = None        
+        
+        else:
+            while curr.next.next != self.head:
+                curr = curr.next
+            prev = curr
+            curr = curr.next
+            prev.next = self.head
+        
+        self.nodeCount -= 1
+        return curr.data
+    
+    def deleteAt(self, idx):
+        if idx < 1 or idx > self.nodeCount:
+            return None
+        
+        curr = self.getData(idx)
+        prev = self.getData(idx - 1)
+        nextNode = self.getData(idx + 1)
+        lastNode = self.getData(self.nodeCount)
+        
+        if idx == 1:
+            curr = self.head
+            self.head = nextNode
+            lastNode.next = self.head
+        
+        else:
+            prev.next = nextNode
+        
+        if idx == self.nodeCount:
+            prev.next = self.head
+        
+        self.nodeCount -= 1
+        return curr.data
+          
