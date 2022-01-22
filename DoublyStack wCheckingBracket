@@ -1,0 +1,61 @@
+import sys
+from index import Node
+from index import DoublyLinkedList
+
+class DoublyLinkedListStack:
+    def __init__(self):
+        self.data = DoublyLinkedList()
+        
+    def __repr__(self):
+        if self.isEmpty():
+            return "Stack is empty!"
+        
+        message = ""
+        for i in self.data.reverse():
+            message += str(i)
+            if i != self.data.getAt(1).data:
+                message += '\n'
+        
+        return message
+    
+    def size(self):
+        return self.data.getNodeCount()
+    
+    def isEmpty(self):
+        return self.size() == 0
+    
+    def peek(self):
+        if self.isEmpty():
+            return None
+        
+        return self.data.getAt(self.size()).data
+    
+    def push(self, item):
+        node = Node(item)
+        self.data.insertAt(self.size() + 1, node)
+        
+    def pop(self):
+        #if self.isEmpty():
+        #    return None
+        
+        return self.data.popAt(self.size())
+        
+        
+def CheckingBracket():
+    stack = DoublyLinkedListStack()
+    formula = sys.stdin.readline().rstrip()
+    
+    for item in formula:
+        if item == "[" or item == "{" or item == "(":
+            stack.push(item)
+        
+        if item == "]" and stack.peek() == "[":
+            stack.pop()
+        
+        if item == "}" and stack.peek() == "{":
+            stack.pop()
+            
+        if item == ")" and stack.peek() == "(":
+            stack.pop()
+        
+    return stack.isEmpty()
