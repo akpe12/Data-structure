@@ -8,9 +8,9 @@ class Arraystack:
             return "Stack is empty!"
         message = ""
         
-        for item in reversed(self.data):
+        for idx, item in enumerate(reversed(self.data)):
             message += str(item)
-            if item != self.data[0]:
+            if idx != self.size() - 1:
                 message += '\n'
                 
         return message
@@ -36,3 +36,24 @@ class Arraystack:
             return None
         
         return self.data.pop()
+    
+def CheckingBracket(expr):
+    match = {
+        ')': '(',
+        '}': '{',
+        ']': '['
+    }
+    s = Arraystack()
+    
+    for c in expr:
+        if c in "({[":
+            s.push(c)
+        elif c in match:
+            if s.isEmpty():
+                return False
+            else:
+                t = s.pop()
+                if t != match[c]:
+                    return False
+        
+    return s.isEmpty()
