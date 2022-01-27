@@ -135,3 +135,29 @@ def postfix():
         postfix += stack.pop()
 
     return postfix
+
+def postfixEval(postfix):
+    stack = Arraystack()
+    result = 0
+    
+    for item in postfix:
+        if item == ' ':
+            continue
+        if item not in "*/+-":
+            stack.push(item)
+        if item in "*/+-":
+            y = stack.pop()
+            x = stack.pop()
+            x = int(x)
+            y = int(y)
+            if item == '*':
+                result = x * y
+            if item == '/':
+                result = x / y
+            if item == '+':
+                result = x + y
+            if item == '-':
+                result = x - y
+            stack.push(result)
+    
+    return stack.pop()
