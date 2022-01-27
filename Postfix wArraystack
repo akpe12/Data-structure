@@ -70,22 +70,34 @@ def postfix():
             }
     
     for item in formula:
+        #operator가 아닌 문자열들을 수식에 집어넣는다.
         if item not in "*/+-()":
             postfix += item
+        #'('가 발견되었다면, 스택에 push한다.
         if item == '(':
             stack.push(item)
+        #')'가 발견되었다면, 스택 내의 '('가 발견될 때까지 스택 내의 수식들을 pop해주고 한번 더 pop하여 스택 내에 남아있는 '('를 제거해준다.
         if item == ")":
             while stack.peek() != '(':
                 postfix += stack.pop()
             stack.pop()
+        #item이 */+- 중 하나일 경우:
         if item in "*/+-":
+            #스택이 비어있는 경우라면 바로 스택 안에 네 개의 수식 중 발견되는 하나를 집어넣는다.
             if stack.isEmpty():
                 stack.push(item)
+            #스택이 비어있지 않다면:
             else:
+                #비어있지 않고, 스택에 들어가려는 수식의 우선순위보다 스택 안에 저장되어있는 수식의 우선순위가 높다면, 그런 동안:
                 while not stack.isEmpty() and prec[item] <= prec[stack.peek()]:
+                    #스택 안에 있는 모든 우선순위가 더 높은 수식들을 pop하여 후위표현식에 집어넣는다.
                     postfix += stack.pop()
+                #스택 안에 있던 더 높은 우선순위의 수식들이 '모두' pop 되었다면, 그 이후에 push하려던 수식을 스택에 집어넣는다.
                 stack.push(item)
+    #모든 과정이 끝나고, 중위표현식을 왼쪽부터 오른쪽까지 다 읽어 맨 오른쪽에 커서가 위치해 있다면,
+    #스택 안에 수식이 남아있는 동안:
     while stack.isEmpty() == False:
+        #모든 수식들을 pop하여 후위표현식에 집어넣는다.
         postfix += stack.pop()
-
+    #postfix를 반환한다.
     return postfix
