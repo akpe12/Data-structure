@@ -101,3 +101,37 @@ def postfix():
         postfix += stack.pop()
     #postfix를 반환한다.
     return postfix
+
+#my work
+def postfix():
+    formula = sys.stdin.readline().rstrip()
+    stack = Arraystack()
+    postfix = ""
+    prec = {'*' : 3, '/' : 3,
+            '+' : 2, '-' : 2,
+            '(' : 1
+           }
+
+    for item in formula:
+        if item not in prec:
+            if item != ')':
+                postfix += item
+        else:
+            if stack.isEmpty():
+                stack.push(item)
+            elif item == '(':
+                stack.push(item)
+            else:
+                while not stack.isEmpty() and prec[item] <= prec[stack.peek()]:
+                        postfix += stack.pop()
+                stack.push(item)
+                if prec[item] > prec[stack.peek()]:
+                    stack.push(item)
+        if item == ')':
+            while stack.peek() != '(':
+                postfix += stack.pop()
+            stack.pop()
+    while stack.isEmpty() == False:
+        postfix += stack.pop()
+
+    return postfix
