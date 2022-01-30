@@ -1,0 +1,50 @@
+class CircularQueue:
+    def __init__(self, n):
+        self.maxIdx = n
+        self.data = [None] * n
+        self.count = 0        #현재 queue에 들어있는 data의 개수를 나타낸다.
+        self.rear = -1
+        self.front = -1
+        
+    def __repr__(self):
+        if self.isEmpty():
+            return "Queue is empty!"
+        message = "["
+        
+        for idx, item in enumerate(self.data):
+            message += str(item)
+            if idx != self.maxIdx - 1:
+                message += ", "
+        message += "]" 
+            
+        return message
+    
+    def size(self):
+        return self.count
+    
+    def isEmpty(self):
+        return self.count == 0
+    
+    def isFull(self):
+        return self.count == self.maxIdx
+    
+    def enqueue(self, item):
+        if self.isFull():
+            raise IndexError('Queue full')
+        self.rear = (self.rear + 1) % self.maxIdx
+        self.data[self.rear] = item
+        self.count += 1
+        
+    def dequeue(self):
+        if self.isEmpty():
+            raise IndexError('Queue empty')
+        self.front = (self.front + 1) % self.maxIdx
+        curr = self.data[self.front]
+        self.count -= 1
+        
+        return curr
+    
+    def peek(self):        
+        if self.isEmpty():
+            raise IndexError('Queue empty')
+        return self.data[(self.front + 1) % self.maxIdx]
