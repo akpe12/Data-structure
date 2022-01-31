@@ -1,0 +1,170 @@
+class Node:
+    def __init__(self, item):
+        self.data = item
+        self.prev = None
+        self.next = None
+    
+class DoublyLinkedList:
+    def __init__(self):
+        self.nodeCount = 0
+        self.head = Node(None)
+        self.tail = Node(None)
+        self.head.next = self.tail
+        self.head.prev = None
+        self.tail.next = None
+        self.tail.prev = self.head
+        
+    
+    def __repr__(self):
+        if self.nodeCount == 0:
+            return "List is empty!"
+        
+        curr = self.head
+        message = ""
+        
+        while curr.next.next != None:
+            curr = curr.next
+            message += str(curr.data)
+            message += " <-> "
+            
+        return message
+    
+    def getNodeCount(self):
+        return self.nodeCount
+    
+    def getAt(self, idx):
+        if idx < 0 or idx > self.nodeCount:    #왜 idx가 0미만이면 안 되는 거지? 왜 1미만이 아니지? getAt에 0을 넣어서 검증해보자.
+            return None
+        
+        if idx > self.nodeCount // 2:
+            i = 0
+            curr = self.tail
+            
+            while i < self.nodeCount - idx + 1:    # +1이 붙는 이유는 nodeCount가 10일때, 실제 nodeCount는 12이기 때문이다. dummy node 2개는 count에서 제외되므로.
+                curr = curr.prev
+                i += 1
+        else:
+            i = 0
+            curr = self.head
+
+            while i < idx:
+                curr = curr.next
+                i += 1
+        
+        return curr
+        
+    def travelse(self):
+        items = []
+        curr = self.head
+        
+        while curr.next.next != None:    #self.head와 self.tail은 Node(None)이고 self.head.next와 self.tail.next는 None이기 때문이다. 그래서 while curr.next != None가 아닌 것이다.
+            curr = curr.next
+            items.append(curr.data)
+            
+        return items
+    
+    def reverse(self):
+        items = []
+        curr = self.tail
+        
+        while curr.prev.prev != None:
+            curr = curr.prev
+            items.append(curr.data)
+        
+        return items
+    
+    def insertAt(self, idx, newNode):    #insertAfter를 활용함, dummy Node가 있기 때문에
+        if idx < 1 or idx > self.nodeCount + 1:
+            return False
+        
+        prev = self.getAt(idx - 1)
+        
+        return self.insertAfter(prev, newNode)
+    
+    def insertAfter(self, prev, newNode):    #prev.next가 tail이어도 연결을 지을 수 있기 때문에, next.next가 None이어도 아무 상관이 없다. 이 method는 prev의 idx가 무조건 정상적이다는 걸 가정하고 작성한다. 
+        nextNode = prev.next
+        prev.next = newNode
+        nextNode.prev = newNode
+        newNode.prev = prev
+        newNode.next = nextNode
+        self.nodeCount += 1
+        
+        return True
+    
+    def insertBefore(self, nextNode, newNode):    #연습문제
+        prev = nextNode.prev                      #newNode가 삽입되기 전이기 때문에, nextNode.prev.prev가 아니다.
+        prev.next = newNode
+        nextNode.prev = newNode
+        newNode.next = nextNode
+        newNode.prev = prev
+        
+        self.nodeCount += 1
+        
+        return True
+        
+    def popAt(self, idx):
+        if idx < 1 or idx > self.nodeCount:
+            raise IndexError
+        
+        prev = self.getAt(idx - 1)
+        if idx + 1 == self.nodeCount + 1:
+            nextNode = self.tail
+        
+        return self.popAfter(prev)
+    
+    def popAfter(self, prev):
+        nextNode = prev.next.next
+        curr = prev.next
+        prev.next = prev.next.next
+        nextNode.prev = prev
+        self.nodeCount -= 1
+
+        return curr.data
+    
+    def popBefore(self, nextNode):
+        curr = nextNode.prev
+        prev = nextNode.prev.prev
+        prev.next = nextNode
+        nextNode.prev = prev
+        self.nodeCount -= 1
+        
+        return curr.data
+    
+    def concat(self, L):
+        if L.nodeCount == 0 or self.nodeCount == 0:    #이게 지워저야 정답...?
+            return False
+        
+        curr = self.tail.prev
+        curr.next = L.head.next
+        L.head.next.prev = curr
+        self.tail = L.tail
+        self.nodeCount += L.nodeCount
+        
+        return True
+    
+# 우선순위 큐는 rear, front 순으로 dequeue되는 것이 아니다. 기준이 오직 우선순위이므로, pop() 할 때 그리고 peek() 할 때, 스택처럼 해놓은 것이다.
+# 수가 작을 수록 우선순위가 크다고 가정한다.
+
+class PriorityQueue:
+    def __init__(self):
+        self.queue = DoublyLinkedList()
+    
+    def size(self):
+        return self.queue.getNodeCount()
+    
+    def isEmpty(self):
+        return self.size() == 0
+    
+    def enqueue(self, node):
+        item = Node(node)
+        curr = self.queue.head
+        
+        while curr.next.next != None and item.data <= curr.next.data:
+            curr = curr.next
+        self.queue.insertAfter(curr, item)
+        
+    def dequeue(self):
+        return self.queue.popAt(self.queue.getNodeCount())
+    
+    def peek(self):
+        return self.queue.getAt(self.queue.getNodeCount()).data
