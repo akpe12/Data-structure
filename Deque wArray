@@ -1,0 +1,57 @@
+class Deque:
+    def __init__(self, parameter = None):
+        self.maxIdx = None
+        if parameter == None:
+            self.deque = []
+        if type(parameter) == int:
+            self.maxIdx = parameter
+            self.deque = []
+        if type(parameter) == list:
+            self.deque = parameter
+        
+    def __repr__(self):
+        return str(self.deque)
+    
+    def size(self):
+        return len(self.deque)
+
+    def isEmpty(self):
+        return len(self.deque) == 0
+    
+    def isFull(self):
+        if self.maxIdx != None:
+            return len(self.deque) == self.maxIdx
+        else:
+            return False
+        
+    def getMaxIdx(self):
+        return self.maxIdx
+    
+    def append(self, item):
+        if self.isFull():
+            return "Deque is full!"
+        self.deque.append(item)
+        
+    def appendLeft(self, item):
+        if self.isFull():
+            return "Deque is full!"
+        self.deque.insert(0, item)
+        
+    def insert(self, idx, item):
+        if self.isFull():
+            return "Deque is full!"
+        self.deque.insert(idx, item)
+        
+    def pop(self):
+        if self.isEmpty():
+            return "Deque is empty!"
+        return self.deque.pop()
+        
+    def popLeft(self):
+        if self.isEmpty():
+            return "Deque is empty!"
+        return self.deque.pop(0)
+    
+    def clear(self):
+        while not self.isEmpty():
+            self.deque.pop()
