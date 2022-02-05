@@ -55,3 +55,11 @@ class Deque:
     def clear(self):
         while not self.isEmpty():
             self.deque.pop()
+            
+    def rotate(self, num):
+        if num >= 0:
+            for reps in range(num):
+                self.appendLeft(self.pop())
+        else:
+            for reps in range(num * -1):
+                self.append(self.popLeft())
