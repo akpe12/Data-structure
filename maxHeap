@@ -1,0 +1,29 @@
+class maxHeap:
+    def __init__(self):
+        self.heap = [0]
+    
+    def size(self):
+        return len(self.heap)
+    
+    def insert(self, data):
+        self.heap.append(data)
+        newdataIdx = len(self.heap) - 1
+        
+        while ((newdataIdx != 1) and (self.heap[newdataIdx] > self.heap[newdataIdx // 2])):
+            self.heap[newdataIdx], self.heap[newdataIdx // 2] = self.heap[newdataIdx // 2], self.heap[newdataIdx]
+            newdataIdx = newdataIdx // 2
+    
+    def pop(self):
+        maximum = self.heap[1]
+        self.heap[1], self.heap[-1] = self.heap[-1], self.heap[1]
+        self.heap.pop()
+        
+        parent = 1
+        while True:
+            child = parent * 2
+            
+            if (child + 1 < len(self.heap) and self.heap[child + 1] > self.heap[child]) : child += 1
+            if (child >= len(self.heap) or self.heap[parent] > self.heap[child]) : break
+            self.heap[child], self.heap[parent] = self.heap[parent], self.heap[child]
+            parent = child
+        return maximum
