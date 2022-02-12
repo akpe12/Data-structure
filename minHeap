@@ -1,0 +1,31 @@
+class minHeap:
+    def __init__(self):
+        self.heap = [0]
+        
+    def size(self):
+        return len(self.heap)
+    
+    def insert(self, data):
+        self.heap.append(data)        # 제일 마지막 노드에 데이터를 삽입한다
+        dataIdx = len(self.heap) - 1  # 마지막 노드의 index를 저장
+        
+        while ((dataIdx != 1) and (data < self.heap[dataIdx // 2])):    # 새로운 노드가 루트 노드가 되지 않을 때까지 and 부모 노드가 자신보다 더 큰 동안:
+            self.heap[dataIdx], self.heap[dataIdx // 2] = self.heap[dataIdx // 2], self.heap[dataIdx]    # 부모 노드와 자식 노드를 swap
+            dataIdx = dataIdx // 2  
+            
+    def pop(self):
+        minium = self.heap[1]        #최소값을 미리 지정한다
+        self.heap[1], self.heap[-1] = self.heap[-1], self.heap[1]    #마지막 노드의 값과 루트 노드의 값을 swap 해준다 (pop이후에도 완전 이진트리를 유지하기 위해서)
+        self.heap.pop() #최소값을 pop해준다. 위의 줄로 인해서 최소값이 idx 1에서 -1로 이동한다
+        
+        parent = 1    
+        while (True) :    #마지막 노드를 idx 1의 위치로 옮겼으므로, 자식 노드들과 비교하면서 자식 노드가 더 작다면 swap 해준다
+            child = parent * 2    #왼쪽, 오른쪽 자식 노드의 차이는 parent * 2에서 +1이 있고 없고이므로
+
+            if (child+1 < len(self.heap) and self.heap[child] > self.heap[child+1]) : child += 1 #왼쪽 자식 노드의 값이 오른쪽 자식 노드의 값보다 크고, 오른쪽 자식 노드의 idx가 총 길이보다 작다면:
+            #ㄴ>child + 1로 child의 idx를 바꿔도 즉, child's idx에 +=1을 해도 총 size를 넘지 않으면서 child + 1이 child idx 안에 있는 값보다 더 작은지 체크하고 모두 체크한 후에 child + 1로 넘어가는 동작
+            if (child >= len(self.heap) or self.heap[child] > self.heap[parent]) : break    #자식 노드가 자신보다 더 크거나, 왼쪽 자식 노드의 idx가 총 길이보다 크다면:
+            #ㄴ>더 비교를 할 필요가 있는지, child의 idx를 총 size와 비교하고 부모와 자식노드의 값을 비교한다.
+            self.heap[child], self.heap[parent] = self.heap[parent], self.heap[child]
+            parent = child
+        return minium
