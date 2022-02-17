@@ -1,0 +1,91 @@
+class Node:
+    def __init__(self, key, data):
+        self.key = key
+        self.data = data
+        self.left = None
+        self.right = None
+        
+    def lookup(self, key, parent = None):
+        if key < self.key:
+            if self.left:
+                return self.left.lookup(key, self)
+            else:
+                return None, None
+        elif key > self.key:
+            if self.right:
+                return self.right.lookup(key, self)
+            else:
+                return None, None
+        else:
+            return self, parent
+        
+    def minimum(self):
+        if self.left:
+            return self.left.minimum()
+        else:
+            return self
+        
+    def maximum(self):
+        if self.right:
+            return self.right.maximum()
+        else:
+            return self
+        
+    def insert(self, key, data):
+        if key < self.key:
+            if self.left:
+                self.left.insert(key, data)
+            else:
+                self.left = Node(key, data)
+        elif key > self.key:
+            if self.right:
+                self.right.insert(key, data)
+            else:
+                self.right = Node(key, data)
+        else:
+            raise KeyError("KeyError!")
+            
+    def inorder(self):
+        nodes = []
+        
+        if self.left:
+            nodes += self.left.inorder()
+        nodes.append(self)
+        if self.right:
+            nodes += self.right.inorder()
+            
+        return nodes
+        
+class BinarySearchTree:
+    def __init__(self):
+        self.root = None
+        
+    def lookup(self, key):
+        if self.root:
+            return self.root.lookup(key)
+        else:
+            return None, None
+    
+    def minimum(self):
+        if self.root:
+            return self.root.minumum()
+        else:
+            return None
+        
+    def maximum(self):
+        if self.root:
+            return self.root.maximum()
+        else:
+            return None
+    
+    def insert(self, key, data):
+        if self.root:
+            self.root.insert(key, data)
+        else:
+            self.root = Node(key, data)
+
+    def inorder(self):
+        if self.root:
+            return self.root.inorder()
+        else:
+            return []
