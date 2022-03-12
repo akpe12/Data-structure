@@ -23,13 +23,13 @@ class Node:
         if self.left:
             return self.left.minimum()
         else:
-            return self
+            return self.key
         
     def maximum(self):
         if self.right:
             return self.right.maximum()
         else:
-            return self
+            return self.key
         
     def insert(self, key, data):
         if key < self.key:
@@ -50,10 +50,32 @@ class Node:
         
         if self.left:
             nodes += self.left.inorder()
-        nodes.append(self)
+        nodes.append(self.key)
         if self.right:
             nodes += self.right.inorder()
             
+        return nodes
+       
+    def preorder(self):
+        nodes = []
+        
+        nodes.append(self.key)
+        if self.left:
+            nodes += self.left.preorder()
+        if self.right:
+            nodes += self.right.preorder()
+            
+        return nodes
+        
+    def postorder(self):
+        nodes = []
+        
+        if self.left:
+            nodes += self.left.postorder()
+        if self.right:
+            nodes += self.right.postorder()
+        nodes.append(self.key)
+        
         return nodes
         
 class BinarySearchTree:
@@ -83,9 +105,106 @@ class BinarySearchTree:
             self.root.insert(key, data)
         else:
             self.root = Node(key, data)
+    
+    def remove(self, key):
+        #삭제할 노드와 삭제될 노드의 부모 노드를 parameter인 key를 이용해서 저장해 놓는다.
+        node, parent = self.lookup(key)
+        #parameter로 받은 key에 해당하는 node가 있어서 삭제할 수 있다면:
+        if node:
+            #삭제될 노드가 가지고 있는 자식의 수를 childrenOfNode에 저장한다.
+            childrenOfNode = node.countChildren()
+            # 1. 삭제될 노드가 자식을 가지고 있지 않다면:
+            if childrenOfNode == 0:    #parent가 있는 경우와 없는 경우로 나눠야 한다.
+                #삭제될 노드가 root node가 아니라면:
+                if parent:
+                    #삭제될 노드가 parent의 왼쪽 자식인지 오른쪽 자식인지 확인하고 parent 노드와 삭제될 노드와의 link를 끊어준다.
+                    if parent.left:
+                        if parent.left.key == node.key:
+                            parent.left = None
+                    if parent.right:
+                        if parent.right.key == node.key:
+                            parent.right = None
+                #삭제될 노드가 root node라면:
+                else:
+                    #root node를 None으로 바꿔준다.
+                    self.root = None
+            # 2. 삭제될 노드의 자식 노드가 1개라면:
+            elif childrenOfNode == 1:    #parent가 있는 경우와 없는 경우로 나눠야 한다.
+                #삭제될 노드의 자식 노드가 왼쪽에 있는지 오른쪽에 있는지 확인한 후에 자식 노드를 미리 변수에 저장해 놓는다.
+                child = node.left if node.left else node.right
+                #삭제될 노드가 root node가 아니라면:
+                if parent:
+                    #삭제될 노드의 위치에 그 노드(삭제될 노드)의 자식 노드를 놓기 위해서, 삭제될 노드가 parent의 왼쪽 자식인지 오른쪽 자신인지 확인한 후에 parent와의 link에 자식 노드를 연결지어준다.
+                    if parent.left.key == node.key:
+                        parent.left = child
+                    else:
+                        parent.right = child
+                #삭제될 노드가 root node라면:
+                else:
+                    #root node의 자리에 자식 노드를 놓아준다.
+                    self.root = child
+            # 3. 삭제될 노드의 자식 노드가 2개라면:
+            else:
+                #삭제될 노드의 successor를 찾기 위해서 parent 변수에 삭제될 노드의 정보를 넣어준다.
+                #successor을 찾기 위해 삭제될 노드의 key보다 한 단계 큰 key를 가지고 있는 노드를 찾으려고 한다.
+                #그렇게 하기 위해서는 삭제될 노드의 오른쪽 부분 트리에서 가장 왼쪽에 위치해 있는 노드를 찾아야 한다.
+                #따라서 successor 변수에 우선 삭제될 노드의 오른쪽 자식 노드를 가리키게 한다.
+                parent = node
+                successor = node.right
+                #삭제될 노드의 오른쪽 부분 트리에서 왼쪽의 끝이 나올 때까지:
+                while successor.left:
+                    parent = successor
+                    successor = successor.left
+                #위의 단계에서 삭제될 노드의 자리를 대체할 successor을 찾은 것이다.
+                #그리고 그 successor의 parent node를 찾은 것이다.
+                #삭제될 노드의 key와 data를 successor의 key와 data로 바꿔준다. 중요한 것은 successor의 값을 삭제될 노드의 자리에 복사만 해놓은 것이다.
+                #삭제될 노드에 대체할 노드(successor)를 끼워넣는 것이 아닌 값만 대입시켜 놓는 이유는
+                #원래 successor가 위치했던 곳을 기억하여 successor를 지워버림으로써 노드가 중복되는 상황을 없애기 위해서이다.
+                #노드가 중복되는 상황이 발생하는 이유는, 1. 삭제될 노드의 자리에 이미 successor의 값이 복사되어 있다. 2. 원래 successor 노드 자리에 successor가 위치해 있다.
+                node.key = successor.key
+                node.data = successor.data
+                #그래서 원래의 위치에 있던 successor를 지워버리거나 successor의 자식으로 successor의 자리를 채워넣는 과정이 필요하다.
+                #그 과정을 위해 successor가 successor의 parent의 왼쪽에 있는지 오른쪽에 있는지 확인한 후에
+                #successor's parent의 left 혹은 right의 link를 successor의 자식 노드와 연결지어준다. (successor의 자식이 없을 수도 있다.)
+                if successor == parent.left:
+                    parent.left = successor.left if successor.left else successor.right
+                elif successor == parent.right:
+                    parent.right = successor.right if successor.right else successor.left
+            return True
+        #parameter로 받은 key에 해당하는 node가 없어서 삭제할 수 없다면:
+        else:
+            return False
 
     def inorder(self):
         if self.root:
             return self.root.inorder()
         else:
             return []
+            
+    def preorder(self):
+        if self.root:
+            return self.root.preorder()
+        else:
+            return []
+        
+    def postorder(self):
+        if self.root:
+            return self.root.postorder()
+        else:
+            return []
+        
+    def levelorder(self):
+        nodes = []
+        q = []
+        
+        if self.root:
+            q.append(self.root)
+            while len(q) != 0:
+                node = q.pop(0)
+                nodes.append(node.key)
+                if node.left:
+                    q.append(node.left)
+                if node.right:
+                    q.append(node.right)
+        
+        return nodes
