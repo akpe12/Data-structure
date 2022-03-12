@@ -5,6 +5,36 @@ class Node:
         self.left = None
         self.right = None
         
+    def size(self):
+        l = self.left.size() if self.left else 0
+        r = self.right.size() if self.right else 0
+        return l + r + 1
+        
+    def depth(self):
+        l = self.left.depth() if self.left else 0
+        r = self.right.depth() if self.right else 0
+        depthOfSubtree = l if l >= r else r
+        
+        return depthOfSubtree + 1
+    
+    def isBalanced(self):
+        l = self.left.depth() if self.left else 0
+        r = self.right.depth() if self.right else 0
+        bigger = l if l >= r else r
+        smaller = l if l != bigger else r
+        if bigger - smaller <= 1:
+            return True
+        else:
+            return False
+        
+    def countChildren(self):
+        count = 0
+        if self.left:
+            count += 1
+        if self.right:
+            count += 1
+        return count
+        
     def lookup(self, key, parent = None):
         if key < self.key:
             if self.left:
@@ -81,6 +111,24 @@ class Node:
 class BinarySearchTree:
     def __init__(self):
         self.root = None
+        
+    def size(self):
+        if self.root:
+            return self.root.size()
+        else:
+            return 0
+        
+    def depth(self):
+        if self.root:
+            return self.root.depth()
+        else:
+            return 0
+        
+    def isBalanced(self):
+        if self.root:
+            return self.root.isBalanced()
+        else:
+            return None
         
     def lookup(self, key):
         if self.root:
