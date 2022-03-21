@@ -1,0 +1,25 @@
+dfs_graph = [
+    [],
+    [2, 3, 8],
+    [1, 7],
+    [1, 4, 5],
+    [3, 5],
+    [3, 4],
+    [7],
+    [2, 6, 8],
+    [1, 7]
+]
+
+visited = [False] * 9
+
+def dfs(graph, node, visited):
+    visited[node] = True
+    if all(visited[1:]):
+        print(node)
+    else:
+        print(node, end = ' -> ')
+    for i in graph[node]:
+        if visited[i] != True:
+            dfs(graph, i, visited)
+            
+dfs(dfs_graph, 1, visited)
