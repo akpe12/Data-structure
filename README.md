@@ -1,2 +1,2 @@
-# LinkedList
-Building of Linkedlist
+# Data structure
+Building of Data structure
