@@ -1,0 +1,33 @@
+from collections import deque
+
+bfs_graph = [
+    [],
+    [2, 3, 8],
+    [1, 7],
+    [1, 4, 5],
+    [3, 5],
+    [3, 4, 8],
+    [7, 8],
+    [2, 6],
+    [1, 5, 6]
+]
+
+b_visited = [False] * 9
+
+def bfs(graph, node, visited):
+    cnt = 0
+    queue = deque([node])
+    visited[node] = True
+    while queue:
+        cnt += 1
+        curr = queue.popleft()
+        if cnt == len(visited) - 1:
+            print(curr)
+        else:
+            print(curr, end = ' -> ')
+        for i in graph[curr]:
+            if visited[i] != True:
+                queue.append(i)
+                visited[i] = True
+                
+bfs(bfs_graph, 1, b_visited)
