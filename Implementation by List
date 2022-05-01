@@ -1,0 +1,61 @@
+#adjlist
+
+#node를 표현하기 위한 class
+class Adjnode:
+    def __init__(self, data):
+        self.node = data
+        self.next = None
+
+#graph 전체를 표현하기 위한 class
+class Graph:
+    def __init__(self, nodes):
+        #그래프에 있는 전체 node의 개수를 node_nums에 저장하도록 한다.
+        #매개변수는 nodes로 하고 nodes를 통해 node_nums변수에 저장되도록 한다.
+        self.node_nums = nodes
+        #전체 node 개수를 바탕으로 list를 그린다.
+        #예를 들어, node_nums에 3이 저장됐으면, 총 node는 3개라는 의미이다.
+        #graph에는 [[None],
+                    [None],
+                    [None]]로 표현되어 head를 표현해준다.
+        self.graph = [None] * self.node_nums
+        
+        #간선을 추가해주면서, 간선의 방향을 나타내도록 한다.
+    def add_edge(self, start, dest):
+        #start -> dest 방향으로의 간선을 추가해주는 과정이다.
+        #우선, node 변수에 Adjnode class를 활용해 node 정보를 저장한다.
+        node = Adjnode(dest)
+        #여기에서 이 코드가 작성되어야 하는 이유는 아래와 같다.
+        #나중에 graph를 탐색할 때는 node의 값(번호)를 참조하여
+        #graph를 탐색하여 그 node의 값 안에 어떤 다른 node들이 간선으로
+        #연결되어 있는지 파악한다.
+        #start에 꼭 같은 값의 node가 들어간다는 보장이 없다.
+        #이 말은 즉, 임의의 N번 node에 제일 마지막으로 연결됐던 node가
+        #어떤 node인지 기억해줄 매개체가 필요하다는 뜻이다.
+        #그래서 이 코드를 작성하여 graph를 정상적으로 탐색할 수 있게 한다.
+        node.next = self.graph[start]
+        #node 값을 넣어주어 간선을 연결해준다.
+        #이렇게 넣어야 start가 0이고 dest가 1일 때
+        #graph[0]으로 탐색하면 1이 결과값으로 나타난다.(1에 연결되어있다는 뜻)
+        self.graph[start] = node
+        
+        #dest -> start 방향으로의 간선을 추가해주는 과정이다.
+        #무방향 그래프를 나타내기 때문이다.
+        node = Adjnode(start)
+        node.next = self.graph[dest]
+        self.graph[dest] = node
+    def print_graph(self):
+        for i in range(self.node_nums):
+            print("node {}\n".format(i), end = "")
+            now = self.graph[i]
+            while now:
+                if now.next:
+                    print(now.node, " -> ", end = "")
+                else:
+                    print(now.node, end = "")
+                now = now.next
+            print('\n')
+
+graph = Graph(3)
+graph.add_edge(0, 1)
+graph.add_edge(0, 2)
+graph.print_graph()
