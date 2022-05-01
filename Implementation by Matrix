@@ -1,4 +1,4 @@
-#AdjMatrix(Directed graph)
+#AdjMatrix(Undirected graph)
 import sys
 from pprint import pprint
 
@@ -14,7 +14,7 @@ for i in range(edges):
 
 pprint(adj_mat)
 
-#AdjMatrix(Undirected graph)
+#AdjMatrix(Directed graph)
 
 vertices = int(sys.stdin.readline().rstrip())
 edges = int(sys.stdin.readline().rstrip())
