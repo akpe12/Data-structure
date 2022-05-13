@@ -1,0 +1,28 @@
+#퀵 정렬(pythonic version)
+import sys
+
+def quick_sort(array):
+    #분할된 리스트의 요소가 1개 이하면 정렬 종료
+    if len(array) <= 1:
+        return array
+    
+    #pivot은 리스트의 첫 번째 요소
+    pivot = array[0]
+    #tail에 리스트의 나머지 요소들을 저장한다.
+    tail = array[1:]
+    
+    #left_side 변수에 pivot 값보다 작거나 같은 데이터들을 모아둔
+    #리스트를 저장한다.
+    left_side = [x for x in tail if x <= pivot]
+    #right_side 변수에 pivot 값보다 큰 데이터들을 모아둔
+    #리스트를 저장한다.
+    right_side = [x for x in tail if x > pivot]
+    
+    #크기에 맞게 분할된 리스트 2개와 pivot값을 반환하여 재귀함수 형식으로 한다.
+    #pivot 값이 가운데에 가있는 이유는
+    #퀵 정렬 과정을 따른 것이다.
+    return quick_sort(left_side) + [pivot] + quick_sort(right_side)
+    
+array = list(map(int, sys.stdin.readline().split()))
+    
+print(quick_sort(array))
