@@ -1,0 +1,37 @@
+#퀵 정렬
+import sys
+
+def quick_sort(array, start_index, end_index):
+    #시작 인덱스가 끝 인덱스 보다 크거나 같은 경우
+    #즉, 분할 리스트에서 데이터가 하나 남은 경우
+    if start_index >= end_index:
+        #퀵 정렬을 종료한다.
+        return
+    pivot = start_index
+    left = start_index + 1
+    right = end_index
+    #left 인덱스가 right 인덱스 보다 작을 동안
+    #pivot보다 큰 값을 찾을 때까지 반복
+    while left <= right:
+        while left <= end_index and array[left] <= array[pivot]:
+            left += 1
+    #right 인덱스가 left 인덱스 보다 클 동안
+    #pivot보다 작은 값을 찾을 때까지 반복
+    while right >= left:
+        while right > start_index and array[right] >= array[pivot]:
+            right -= 1
+    #left와 right가 엇갈렸다면
+    if left > right:
+        array[right], array[pivot] = array[pivot], array[right]
+    #엇갈리지 않았다면
+    else:
+        array[left], array[right] = array[right], array[left]
+    #분할 이후를 구현
+    #왼쪽 그리고 오른쪽
+    quick_sort(array,start_index, right - 1)
+    quick_sort(array, right + 1, end_index)
+    
+array = list(map(int, sys.stdin.readline().split()))
+    
+quick_sort(array, 0, len(array) - 1)
+print(array)
